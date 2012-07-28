@@ -1,0 +1,14 @@
+Liar's Poker
+Created by Alex Swan
+7/20/2012
+
+Setup
+You need to put your PubNub credentials in to make this work.  Get them at PubNub.com
+
+
+Bugs:
+The second player doesn't like to join the first.  In the first console: type "socket.emit('game', game)" after the second has joined to get them on the same page.  I haven't figured out why the second player doesn't get the game.  Next thing to try is to wait a second after the join and then emit the game
+
+viewModel.players isn't updating properly when a person changes their name - You can get a list of players (beside yourself) using
+ 	_.map(socket.get_user_list(), function(val){ return val.user })
+I suggest changing the players list populating to jquery 

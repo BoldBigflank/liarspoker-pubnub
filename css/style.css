@@ -1,0 +1,46 @@
+body{
+    padding-top:60px;
+    padding-bottom:60px;
+}
+div
+.bcard,
+.wcard,
+.entry {
+    min-height: 138px;
+    background: #000;
+    font-size: 22px;
+    border: 1px solid #333;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    padding:22px 19px 22px 19px;
+}
+
+.bcard{
+    background: #000;
+    color: #FFF;
+    font-weight: bold;
+}
+
+.entry { 
+    min-height: 38px;
+    background: #FFF;
+    color: #000;
+    border: 1px solid #333;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.wcard {
+    background: #FFF;
+    color: #000;
+    font-size: 22px;
+}
+
+.hand{
+    background: #158642;
+    background-image: url("http://www.mapquestapi.com/staticmap/v3/getmap?key=Fmjtd%7Cluua20utnh%2Cbs%3Do5-967au6&size=800,600&zoom=7&type=map&center=47.50513,-122.11048")
+}
+
+.submitted{
+    background: #6ACB97;
+}

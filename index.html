@@ -1,0 +1,368 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for Linux/x86 (vers 11 February 2007), see www.w3.org" />
+
+  <title>Liar's Poker</title>
+  <link rel="stylesheet" href="./css/bootstrap-responsive.min.css" type="text/css" />
+  <link rel="stylesheet" href="./css/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="./css/style.css" type="text/css" />
+  <script src="http://cdn.pubnub.com/socket.io.min.js" type="text/javascript">
+</script>
+  <script src="./js/underscore.js" type="text/javascript">
+</script>
+  <script src="./js/jquery.min.js" type="text/javascript">
+</script>
+  <script src="./js/knockout.js" type="text/javascript">
+</script>
+  <script src="./js/knockout.mapping.js" type="text/javascript">
+</script>
+  <script src="./js/bootstrap-dropdown.js" type="text/javascript">
+</script>
+  <script src="./js/bootstrap.min.js" type="text/javascript">
+</script>
+</head>
+
+<body style="padding-top:60px">
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <ul class="nav pull-left">
+          <li>
+            <p class="brand navbar-text name pull-left">Liar's Poker</p>
+          </li>
+        </ul>
+
+        <ul class="nav pull-right">
+          <li class="dropdown"><a href="#" class="dropdown-toggle"><span id="playerScore"
+          data-bind="text: player().score">Score</span></a></li>
+        </ul>
+
+        <div style="margin-left: 2em" class="nav pull-right">
+          <a id="brag" class="btn" name="brag">Invite</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div id="playersList" class="row">
+      <div class="span6"></div>
+    </div>
+
+    <div data-bind="foreach: players" class="row">
+      <div class="span6">
+        <div data-bind=
+        "style:{ color: $parent.turn() &amp;&amp; $parent.turn() == id ? 'green' : ''}"
+        class="row">
+          <div class="span4">
+            <h1 data-bind="text: name"></h1>
+          </div>
+
+          <div class="span2">
+            <h1 data-bind="text: score"></h1>
+          </div>
+        </div>
+
+        <div data-bind="visible: viewModel.state() == 'result', foreach: hand" class=
+        "row">
+          <div data-bind="text:$data" class="span1"></div>
+        </div>
+      </div>
+    </div>
+
+    <div data-bind="visible: _bid.face() &gt; 0" class="row">
+      <div class="span5">
+        <h1>has bid 's</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div data-bind="visible: player().id == turn() &amp;&amp; state() == 'open'" class=
+      "span5">
+        <div class="row">
+          <div class="span5">
+            <h1>Your bid</h1>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="span2">
+            <button id="challenge" data-bind="visible: _bid.player()" class=
+            "btn">Challenge</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="span1 offset2">
+            <button data-bind=
+            "click: function(){viewModel.myQuantity(viewModel.myQuantity()+1)}" class=
+            "btn">+</button>
+          </div>
+
+          <div class="span1">
+            <button data-bind="click: function(){viewModel.myFace(viewModel.myFace()+1)}"
+            class="btn">+</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="span2">
+            Your Bid
+          </div>
+
+          <div class="span1"></div>
+
+          <div class="span1">
+            's
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="span1 offset2">
+            <button data-bind=
+            "click: function(){viewModel.myQuantity(viewModel.myQuantity()-1)}" class=
+            "btn">-</button>
+          </div>
+
+          <div class="span1">
+            <button data-bind="click: function(){viewModel.myFace(viewModel.myFace()-1)}"
+            class="btn">-</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="span2">
+            <button id="bid" class="btn">Bid</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar navbar-fixed-bottom">
+      <div class="container-fluid">
+        <div class="row">
+          <div id="alert" style="display: none" class="alert alert-error">
+            CRISIS ALERT
+          </div>
+        </div>
+
+        <div data-bind="visible: state()=='result'" class="row">
+          <div data-bind=
+          "text: turn() == player().id ? 'You win!' : 'You lose!', css: {'alert-success': turn() == player().id, 'alert-error':turn() != player().id}"
+          class="alert">
+            Winning
+          </div><button id="next" data-bind="visible: viewModel.turn() == player().id"
+          class="btn">Next</button>
+        </div>
+      </div>
+
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <div data-bind=
+          "style:{ color: turn() &amp;&amp; turn() == player().id ? 'green' : ''}" class=
+          "row">
+            <div class="span4">
+              <h1 id="playerName" data-bind="text: player().name"></h1>
+            </div>
+
+            <div class="span2">
+              <h1 data-bind="text: player().score"></h1>
+            </div>
+          </div>
+
+          <div data-bind="foreach:player().hand" class="row">
+            <div data-bind="text:$data" class="span1"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><script src="./js/game.js" type="text/javascript">
+</script><script type="text/javascript">
+//<![CDATA[
+  var player = {
+    id : Math.floor(Math.random() * 100000001 )
+    , name : 'Player'
+    , score : BUYIN
+    , hand : get_hand()
+  }
+  var alertInterval
+  var viewModel
+  var pubnub_setup = {
+    user          : player,
+    channel       : 'liarspoker',
+    publish_key   : 'demo',
+    subscribe_key : 'demo'
+  };
+
+  var socket = io.connect( 'http://pubsub.pubnub.com', pubnub_setup );
+  console.log("Socket", socket, socket.get_user_count())
+  socket.on( 'connect', function() {
+    console.log('Connection Established! Ready to send/receive data!', socket.get_user_count());
+    if(socket.get_user_count() <= 1){
+        // Start the game, we're the only ones here
+        liarspoker_init(player)
+        console.log("Initializing game", game)
+        viewModel = ko.mapping.fromJS(game)
+        viewModel.player = ko.observable(player)
+        viewModel.myFace = ko.observable(parseInt(viewModel._bid.face()))
+        viewModel.myQuantity = ko.observable(parseInt(viewModel._bid.quantity()))
+        viewModel.players = ko.observable(_.map(socket.get_user_list(), function(val){ return val.data }))
+        ko.applyBindings(viewModel);
+    }
+  } );
+
+  socket.on('join', function(user){
+    console.log(
+        'User joined! There are %d user(s) online.',
+        socket.get_user_count(),
+        user,
+        socket.get_user_list()
+    );
+    game.turnOrder.push(user.data.id)
+    if(game.turnOrder[0] == player.id){
+        console.log("Sending Game", game)
+        socket.emit('game', game)
+    }
+  })
+
+  socket.on('leave', function(user){
+    if(game.turn == user.data.id){
+        var next = (game.turnOrder.indexOf(game.turn) + 1) % game.turnOrder.length
+        game.turn = game.turnOrder[next]
+    }
+    game.turnOrder = _.without(game.turnOrder, user.data.id)
+    console.log(
+        'User left! There are %d user(s) online.',
+        socket.get_user_count(),
+        socket.get_user_list()
+    );
+    if(game.turnOrder[0] == player.id){
+        console.log("Sending game", game)
+        socket.emit('game', game)
+    }
+  })
+
+  socket.on('game', function(data){
+    console.log(data.time, game.time, data.time - game.time)
+    if(data.time > game.time) return; // Don't follow stuff later than this
+    console.log("Updating game", data);
+    game.time = data.time
+    game.state = data.state
+    game.turn = data.turn
+    game.turnOrder = data.turnOrder
+    game._bid = data._bid
+    
+    ko.mapping.fromJS(game, viewModel);
+    viewModel.player(player)
+    ko.mapping.fromJS({'players': _.map(socket.get_user_list(), function(val, key){
+            return val.data;
+    })
+    }, viewModel)
+    
+  })
+
+  socket.on('players', function(data){
+    console.log("Players", data)
+    player = _.find(data, function(p){
+        return p.id == player.id
+    })
+    viewModel.player(player)
+    viewModel.players(_.map(socket.get_user_list(), function(val){ return val.data }))
+  })
+
+  socket.on('alert', function(data){ setAlert(data) })
+
+  $("#playerName").click(function(){
+    // Change the person's name
+    player.name = prompt("Enter Your Name:", "") || "Player"
+    viewModel.player(player)
+    var players = _.map(socket.get_user_list(), function(val, key){
+            return val.data;
+    })
+    players.push(player);
+    _.each(players, function(player){ player.hand = get_hand() })
+    socket.emit('players', players)
+  })
+
+  $("#bid").click(function(){
+    // Validation here
+    if(viewModel.myFace() <= 0 || viewModel.myQuantity() <= 0)
+        setAlert("You must choose a valid bid")
+    else if(viewModel.myFace() <= viewModel._bid.face() && viewModel.myQuantity() <= viewModel._bid.quantity() )
+        setAlert("You must bid higher than the previous bid")
+    else {
+        var bid = new Bid()
+        bid.player = player.id
+        bid.name = player.name
+        bid.face = viewModel.myFace()
+        bid.quantity = viewModel.myQuantity()
+        game._bid = bid
+        var next = (game.turnOrder.indexOf(game.turn) + 1) % game.turnOrder.length
+        game.turn = game.turnOrder[next]
+        ko.mapping.fromJS(game, viewModel)
+        socket.emit('game', game)
+    }
+    
+  })
+
+  $("#challenge").click(function(){
+    socket.emit('challenge')
+    if(game.turn != player.id){
+        setAlert("It is not your turn")
+        return
+    }
+    // Gather all the hands
+    var allDice = []
+    var players = _.map(socket.get_user_list(), function(val, key){
+            return val.data;
+    })
+    players.push(player);
+    _.each(players, function(player){ allDice = allDice.concat(player.hand) })
+    var totalQuantity = 0
+    _.each(allDice, function(num){ if(num == game._bid.face) totalQuantity += 1})
+    var winner = (game._bid.quantity > totalQuantity) ? game.turn : game._bid.player // challenger : bidder
+    var spoils = players.length - 1
+    
+    _.each(players, function(player){
+        player.score += (player.id == winner) ? spoils : -1
+    })
+    
+    socket.emit('players', players) // Send the updated scores to the users
+    
+    game.turn = winner
+    game.state = 'result'
+    game.bid = new Bid()
+    socket.emit('game', game)
+    
+  })
+
+  $("#next").click(function(){
+    var players = _.map(socket.get_user_list(), function(val, key){
+            return val.data;
+    })
+    players.push(player);
+    _.each(players, function(player){ player.hand = get_hand() })
+    socket.emit('players', players)
+    game.state = 'open'
+    game._bid = new Bid()
+    socket.emit('game', game)
+  })
+
+  var setAlert = function(message){
+    console.log("ALERT: ", message)
+    $('#alert').html(message).show()
+    clearInterval(alertInterval)
+    alertInterval = setInterval(function(){$('#alert').hide()}, 4000)
+  }
+  //]]>
+  </script><script type="application/javascript">
+<![CDATA[
+  $('.dropdown-toggle').dropdown()
+  ]]>
+  </script>
+</body>
+</html>
